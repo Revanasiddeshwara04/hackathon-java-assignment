@@ -18,5 +18,8 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Make Maven Wrapper Executable
+        run: chmod +x mvnw
+
       - name: Build and Test
         run: ./mvnw clean test
