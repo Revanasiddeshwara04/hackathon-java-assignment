@@ -26,9 +26,25 @@ public class WarehouseResourceImpl implements WarehouseResource {
           Logger.getLogger(WarehouseResourceImpl.class);
 
   @Override
-  public List<Warehouse> listAllWarehousesUnits() {
+  public List<Warehouse> listAllWarehouseUnits() {
     return warehouseRepository.getAll().stream().map(this::toWarehouseResponse).toList();
   }
+
+//    @GET
+//    @Path("/search")
+//    public List<Warehouse> searchWarehouses(
+//            @QueryParam("location") String location,
+//            @QueryParam("minCapacity") Integer minCapacity,
+//            @QueryParam("maxCapacity") Integer maxCapacity) {
+//
+//        return warehouseRepository.search(
+//                        location,
+//                        minCapacity,
+//                        maxCapacity)
+//                .stream()
+//                .map(this::toWarehouseResponse)
+//                .toList();
+//    }
 
   @Override
   @Transactional
@@ -121,5 +137,19 @@ public class WarehouseResourceImpl implements WarehouseResource {
     response.setStock(warehouse.stock);
 
     return response;
+  }
+  @Override
+  public List<Warehouse> searchWarehouses(
+          String location,
+          java.math.BigInteger minCapacity,
+          java.math.BigInteger maxCapacity) {
+
+    return warehouseRepository.search(
+                    location,
+                    minCapacity != null ? minCapacity.intValue() : null,
+                    maxCapacity != null ? maxCapacity.intValue() : null)
+            .stream()
+            .map(this::toWarehouseResponse)
+            .toList();
   }
 }

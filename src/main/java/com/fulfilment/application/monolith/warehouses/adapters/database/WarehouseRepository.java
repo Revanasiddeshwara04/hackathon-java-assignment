@@ -4,6 +4,7 @@ import com.fulfilment.application.monolith.warehouses.domain.models.Warehouse;
 import com.fulfilment.application.monolith.warehouses.domain.ports.WarehouseStore;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import io.quarkus.panache.common.Parameters;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import org.jboss.logging.Logger;
@@ -93,4 +94,19 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
             ? dbWarehouse.toWarehouse()
             : null;
   }
+
+    public List<Warehouse> search(
+            String location,
+            Integer minCapacity,
+            Integer maxCapacity) {
+
+        return listAll()
+                .stream()
+                .filter(w -> w.archivedAt == null)
+                .filter(w -> location == null || location.equals(w.location))
+                .filter(w -> minCapacity == null || w.capacity >= minCapacity)
+                .filter(w -> maxCapacity == null || w.capacity <= maxCapacity)
+                .map(DbWarehouse::toWarehouse)
+                .toList();
+    }
 }

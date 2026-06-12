@@ -24,6 +24,17 @@ public class WarehouseEndpointIT {
   }
 
   @Test
+  void shouldSearchWarehousesByLocation() {
+
+    given()
+            .queryParam("location", "AMSTERDAM-001")
+            .when()
+            .get("/warehouse/search")
+            .then()
+            .statusCode(200);
+  }
+
+  @Test
   public void testSimpleCheckingArchivingWarehouses() {
 
     // Uncomment the following lines to test the WarehouseResourceImpl implementation
