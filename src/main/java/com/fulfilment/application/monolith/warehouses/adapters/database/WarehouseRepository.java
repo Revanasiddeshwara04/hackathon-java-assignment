@@ -55,10 +55,17 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   }
 
   @Override
+  @Transactional
   public void remove(Warehouse warehouse) {
-    throw new UnsupportedOperationException("Unimplemented method 'remove'");
-  }
 
+    DbWarehouse dbWarehouse =
+            find("businessUnitCode", warehouse.businessUnitCode)
+                    .firstResult();
+
+    if (dbWarehouse != null) {
+      delete(dbWarehouse);
+    }
+  }
   @Override
   @Transactional
   public Warehouse findByBusinessUnitCode(String buCode) {
