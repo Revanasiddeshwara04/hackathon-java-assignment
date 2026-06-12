@@ -6,9 +6,13 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class WarehouseRepository implements WarehouseStore, PanacheRepository<DbWarehouse> {
+
+  private static final Logger LOG =
+          Logger.getLogger(WarehouseRepository.class);
 
   @Override
   public List<Warehouse> getAll() {
@@ -22,6 +26,7 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Transactional
   public void create(Warehouse warehouse) {
 
+    LOG.info("Creating warehouse: " + warehouse.businessUnitCode);
     DbWarehouse dbWarehouse = new DbWarehouse();
     dbWarehouse.businessUnitCode = warehouse.businessUnitCode;
     dbWarehouse.location = warehouse.location;
@@ -36,6 +41,8 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Override
   @Transactional
   public void update(Warehouse warehouse) {
+
+    LOG.info("Updating warehouse: " + warehouse.businessUnitCode);
 
     DbWarehouse dbWarehouse =
             find("businessUnitCode", warehouse.businessUnitCode)
@@ -57,6 +64,8 @@ public class WarehouseRepository implements WarehouseStore, PanacheRepository<Db
   @Override
   @Transactional
   public void remove(Warehouse warehouse) {
+
+    LOG.info("Removing warehouse: " + warehouse.businessUnitCode);
 
     DbWarehouse dbWarehouse =
             find("businessUnitCode", warehouse.businessUnitCode)

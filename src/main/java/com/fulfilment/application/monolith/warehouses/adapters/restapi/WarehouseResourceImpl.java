@@ -6,6 +6,7 @@ import com.fulfilment.application.monolith.warehouses.domain.ports.CreateWarehou
 import com.fulfilment.application.monolith.warehouses.domain.ports.ReplaceWarehouseOperation;
 import com.warehouse.api.WarehouseResource;
 import com.warehouse.api.beans.Warehouse;
+import org.jboss.logging.Logger;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,9 @@ public class WarehouseResourceImpl implements WarehouseResource {
   @Inject private ArchiveWarehouseOperation archiveWarehouseOperation;
   @Inject private ReplaceWarehouseOperation replaceWarehouseOperation;
 
+  private static final Logger LOG =
+          Logger.getLogger(WarehouseResourceImpl.class);
+
   @Override
   public List<Warehouse> listAllWarehousesUnits() {
     return warehouseRepository.getAll().stream().map(this::toWarehouseResponse).toList();
@@ -29,7 +33,9 @@ public class WarehouseResourceImpl implements WarehouseResource {
   @Override
   @Transactional
   public Warehouse createANewWarehouseUnit(@NotNull Warehouse data) {
-    // Convert API model to domain model
+
+    LOG.info("Received request to create warehouse: "
+            + data.getBusinessUnitCode());
     var domainWarehouse = new com.fulfilment.application.monolith.warehouses.domain.models.Warehouse();
     domainWarehouse.businessUnitCode = data.getBusinessUnitCode();
     domainWarehouse.location = data.getLocation();
@@ -49,7 +55,8 @@ public class WarehouseResourceImpl implements WarehouseResource {
 
   @Override
   public Warehouse getAWarehouseUnitByID(String id) {
-    // Find warehouse by business unit code
+
+    LOG.info("getAWarehouseUnitByID warehouse: " + id);
     var domainWarehouse = warehouseRepository.findByBusinessUnitCode(id);
     
     if (domainWarehouse == null) {
@@ -62,7 +69,9 @@ public class WarehouseResourceImpl implements WarehouseResource {
   @Override
   @Transactional
   public void archiveAWarehouseUnitByID(String id) {
-    // Find warehouse by business unit code
+
+    LOG.info("Received request to archive warehouse: " + id);
+
     var domainWarehouse = warehouseRepository.findByBusinessUnitCode(id);
 
     if (domainWarehouse == null) {
@@ -81,7 +90,10 @@ public class WarehouseResourceImpl implements WarehouseResource {
   @Transactional
   public Warehouse replaceTheCurrentActiveWarehouse(
       String businessUnitCode, @NotNull Warehouse data) {
-    // Convert API model to domain model
+
+    LOG.info("Received request to replace warehouse: "
+            + businessUnitCode);
+
     var domainWarehouse = new com.fulfilment.application.monolith.warehouses.domain.models.Warehouse();
     domainWarehouse.businessUnitCode = businessUnitCode; // Use businessUnitCode from path
     domainWarehouse.location = data.getLocation();
